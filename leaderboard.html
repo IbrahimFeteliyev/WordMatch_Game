@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WordMatch: Leaderboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="game-container">
+      <header class="game-header">
+        <div class="header-content">
+          <div class="header-left">
+            <h1><i class="fas fa-trophy"></i> Leaderboard</h1>
+            <p class="subtitle">Top performers and your progress</p>
+          </div>
+          <button class="btn-icon" onclick="goToMainMenu()" aria-label="Go to main menu">
+            <i class="fas fa-home"></i>
+          </button>
+        </div>
+      </header>
+
+      <div class="leaderboard-content">
+        <div class="leaderboard-section">
+          <h2><i class="fas fa-crown"></i> Top Performers</h2>
+          <div class="leaderboard-list" id="leaderboard-list"></div>
+        </div>
+
+        <div class="chart-section">
+          <h2><i class="fas fa-chart-line"></i> Your Progress</h2>
+          <div class="chart-container">
+            <canvas id="performanceChart"></canvas>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button class="btn-primary" onclick="goToMainMenu()">
+            <i class="fas fa-home"></i> Back to Game
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="leaderboard.js"></script>
+</body>
+</html>

@@ -322,9 +322,15 @@ function nextOrEndGame() {
       reviewList.appendChild(li);
     } else {
       wrongAnswers.forEach((item) => {
-        const li = document.createElement("li");
-        li.textContent = `❌ You answered '${item.selected}' instead of '${item.correct}' for "${item.question}"`;
-        reviewList.appendChild(li);
+        if (item.question === "Matching task" && item.details) {
+          const div = document.createElement("div");
+          div.innerHTML = `<i class='fas fa-exchange-alt'></i> <strong>Matching task:</strong><ul style='margin:0.5em 0 0 1.5em;padding:0;'>${item.details.map(d => `<li style='margin-bottom:0.25em;'><span style='font-weight:600;'>${d.word}:</span> ${d.isCorrect ? "<span style='color:#059669;'>✅ Correct!</span>" : `❌ You chose '<span style='color:#dc2626;'>${d.selected}</span>', correct is '<span style='color:#059669;'>${d.correct}</span>'`}</li>`).join("")}</ul>`;
+          reviewList.appendChild(div);
+        } else {
+          const li = document.createElement("li");
+          li.textContent = `❌ You answered '${item.selected}' instead of '${item.correct}' for "${item.question}"`;
+          reviewList.appendChild(li);
+        }
       });
     }
 
@@ -615,9 +621,11 @@ function submitMatches() {
   
   answered = true;
   clearInterval(timer);
+  if (window.matchTimerInterval) clearInterval(window.matchTimerInterval);
   
   const current = selectedQuestions[currentIndex];
   let correctMatches = 0;
+  const matchDetails = [];
   
   // Check each match
   currentMatches.forEach((image, word) => {
@@ -625,6 +633,12 @@ function submitMatches() {
     if (isCorrect) {
       correctMatches++;
     }
+    matchDetails.push({
+      word,
+      selected: image.split(".")[0],
+      correct: word,
+      isCorrect
+    });
   });
   
   const feedback = document.getElementById("feedback");
@@ -641,8 +655,7 @@ function submitMatches() {
       feedback.className = "feedback incorrect";
       wrongAnswers.push({
         question: "Matching task",
-        correct: current.word,
-        selected: `${correctMatches}/3 correct`
+        details: matchDetails
       });
     }
   }
@@ -697,21 +710,22 @@ function drawArrow(fromElement, toElement, isCorrect) {
   const toX = toRect.left - containerRect.left;
   const toY = toRect.top + toRect.height / 2 - containerRect.top;
   
-  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  const color = isCorrect ? "var(--success-color)" : "var(--error-color)";
+  // Use solid green for correct, solid red for incorrect
+  const color = isCorrect ? '#059669' : '#dc2626';
   
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
   // Create curved path
   const midX = (fromX + toX) / 2;
   path.setAttribute("d", `M ${fromX} ${fromY} Q ${midX} ${fromY} ${toX} ${toY}`);
   path.setAttribute("stroke", color);
   path.setAttribute("stroke-width", "3");
   path.setAttribute("fill", "none");
-  path.setAttribute("marker-end", "url(#arrowhead)");
-  
+  path.setAttribute("marker-end", `url(#arrowhead-${isCorrect ? 'green' : 'red'})`);
+
   // Add arrowhead marker
   const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
   const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
-  marker.setAttribute("id", "arrowhead");
+  marker.setAttribute("id", `arrowhead-${isCorrect ? 'green' : 'red'}`);
   marker.setAttribute("markerWidth", "10");
   marker.setAttribute("markerHeight", "7");
   marker.setAttribute("refX", "9");

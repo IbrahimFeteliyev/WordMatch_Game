@@ -144,11 +144,27 @@
               <span class="word-text">Loading...</span>
             </div>
           </div>
-
+          <!-- Medium Match Task Section -->
+          <div id="match-task" style="display: none; margin-top: 1rem">
+            <p style="font-size: 1.2rem; text-align: center">
+              <strong>Match each word to the correct image:</strong>
+            </p>
+            <div class="match-task-container">
+  <div class="match-content">
+    <div id="word-list" class="match-column"></div>
+    <div id="image-list" class="match-column"></div>
+  </div>
+  <!-- varsa oxlar üçün SVG konteyner -->
+  <div id="arrow-container"></div>
+</div>
+          </div>
           <div class="image-options" id="image-options"></div>
 
           <div class="feedback" id="feedback"></div>
-
+          <div id="fill-blank-task" style="display: none; margin-top: 1rem">
+            <p id="fill-sentence" style="font-size: 1.2rem"></p>
+            <div id="fill-options" style="margin-top: 10px"></div>
+          </div>
           <!-- Typed Answer (for HARD level) -->
           <div
             id="typed-answer"

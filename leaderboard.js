@@ -87,3 +87,59 @@ function goToMainMenu() {
     }
   });
   
+  // --- Tabbed leaderboard by level ---
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  let currentLevel = "easy";
+  
+  function renderLeaderboard(level) {
+    leaderboardList.innerHTML = "";
+    const filtered = data.filter(r => r.level === level);
+    const leaderboard = [...filtered]
+      .sort((a, b) => {
+        if (b.score !== a.score) {
+          return b.score - a.score;
+        }
+        // If scores are equal, sort by time ascending
+        const timeToSeconds = t => {
+          if (!t) return Infinity;
+          const [m, s] = t.split(":").map(Number);
+          return m * 60 + s;
+        };
+        return timeToSeconds(a.time) - timeToSeconds(b.time);
+      })
+      .slice(0, 5);
+  
+    if (leaderboard.length === 0) {
+      leaderboardList.innerHTML = '<div class="leaderboard-item">No results for this level yet.</div>';
+      return;
+    }
+  
+    leaderboard.forEach((res, i) => {
+      const li = document.createElement("div");
+      li.className = "leaderboard-item";
+      li.innerHTML = `
+        <div class="rank">${i + 1}</div>
+        <div class="player-info">
+          <div class="player-name">${res.username}</div>
+          <div class="player-stats">
+            <span class="score"><i class="fas fa-star"></i> ${res.score} pts</span>
+            <span class="time"><i class="fas fa-clock"></i> ${res.time}</span>
+          </div>
+        </div>
+      `;
+      leaderboardList.appendChild(li);
+    });
+  }
+  
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentLevel = btn.dataset.level;
+      renderLeaderboard(currentLevel);
+    });
+  });
+  
+  // Initial render
+  renderLeaderboard(currentLevel);
+  

@@ -47,6 +47,58 @@ const questions = {
         options: ["pomegranate.jpg", "plum.jpg", "fig.jpg"],
       },
     ],
+    fillblank: [
+      {
+        sentence: "I like to eat a juicy ___ every morning.",
+        options: ["apple", "lemon", "grape"],
+        answer: "apple",
+      },
+      {
+        sentence: "She made a smoothie with ___ and bananas.",
+        options: ["strawberries", "figs", "plums"],
+        answer: "strawberries",
+      },
+      {
+        sentence: "___ is a tropical fruit with a spiky outside.",
+        options: ["Pineapple", "Melon", "Orange"],
+        answer: "Pineapple",
+      },
+      {
+        sentence: "Monkeys love eating ___.",
+        options: ["bananas", "pears", "mangoes"],
+        answer: "bananas",
+      },
+      {
+        sentence: "They bought a bag of fresh ___.",
+        options: ["grapes", "figs", "apples"],
+        answer: "grapes",
+      },
+      {
+        sentence: "I squeezed fresh ___ juice for breakfast.",
+        options: ["orange", "pomegranate", "blueberry"],
+        answer: "orange",
+      },
+      {
+        sentence: "A ___ is small, round, and purple or green.",
+        options: ["grape", "plum", "cherry"],
+        answer: "grape",
+      },
+      {
+        sentence: "She added sliced ___ to the fruit salad.",
+        options: ["kiwi", "apple", "orange"],
+        answer: "kiwi",
+      },
+      {
+        sentence: "___ is known for its red color and seeds inside.",
+        options: ["Pomegranate", "Strawberry", "Tomato"],
+        answer: "Pomegranate",
+      },
+      {
+        sentence: "We decorated the cake with slices of ___.",
+        options: ["strawberry", "banana", "peach"],
+        answer: "strawberry",
+      }
+    ]
   },
   animals: {
     easy: [
@@ -148,11 +200,89 @@ function startGame(useLastSettings = false) {
     }
   }, 1000);
 
+  if (level === "fillblank") {
+    loadFillBlankQuestion();
+    return;
+  }
+
   if (level === "medium") {
     loadMatchTask();
     return;
   }
   loadWord();
+}
+
+function loadFillBlankQuestion() {
+  answered = false;
+  const current = selectedQuestions[currentIndex];
+  const wordDisplay = document.getElementById("word-display");
+  const feedback = document.getElementById("feedback");
+  const imageOptions = document.getElementById("image-options");
+  const typedAnswer = document.getElementById("typed-answer");
+  const fillBlankTask = document.getElementById("fill-blank-task");
+  const fillSentence = document.getElementById("fill-sentence");
+  const optionsDiv = document.getElementById("fill-options");
+
+  // Check if all required elements exist
+  if (!fillBlankTask || !fillSentence || !optionsDiv) {
+    console.error("Required elements for fill-in-the-blank task not found");
+    return;
+  }
+
+  // Add level and question counter
+  const levelStatusContainer = document.querySelector(".level-status");
+  if (levelStatusContainer) levelStatusContainer.remove(); // remove old if exists
+  const gameHeader = document.querySelector(".game-header");
+  const statusDiv = document.createElement("div");
+  statusDiv.className = "level-status";
+  statusDiv.innerHTML = `Level: <strong>${lastLevel.toUpperCase()}</strong> – Question <strong>${currentIndex + 1}/${selectedQuestions.length}</strong>`;
+  gameHeader.appendChild(statusDiv);
+
+  // Clear other sections
+  wordDisplay.style.display = "none";
+  imageOptions.style.display = "none";
+  typedAnswer.style.display = "none";
+  fillBlankTask.style.display = "block";
+  feedback.textContent = "";
+  feedback.className = "feedback";
+
+  // Set the sentence text
+  fillSentence.textContent = current.sentence;
+
+  // Clear and populate options
+  optionsDiv.innerHTML = "";
+  current.options.forEach((opt) => {
+    const btn = document.createElement("button");
+    btn.className = "btn-primary";
+    btn.textContent = opt;
+    btn.onclick = () => handleFillBlankAnswer(opt, current.answer);
+    optionsDiv.appendChild(btn);
+  });
+
+  startTimer();
+}
+
+function handleFillBlankAnswer(selected, correct) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timer);
+
+  const feedback = document.getElementById("feedback");
+  if (selected === correct) {
+    score += 10;
+    correctCount++;
+    feedback.textContent = "✅ Correct!";
+    feedback.className = "feedback correct";
+  } else {
+    wrongCount++;
+    feedback.textContent = `❌ Wrong! The correct answer was: ${correct}`;
+    feedback.className = "feedback incorrect";
+    wrongAnswers.push({ question: "Fill-in-the-Blank", correct, selected });
+  }
+
+  document.getElementById("score").textContent = score;
+  currentIndex++;
+  setTimeout(nextOrEndGame, 3000);
 }
 
 function loadWord() {
@@ -171,6 +301,8 @@ function loadWord() {
   const isTypedLevel = level === "hard";
   const imageOptions = document.getElementById("image-options");
 
+  // Ensure feedback is visible and reset
+  feedback.style.display = "block";
   feedback.textContent = "";
   feedback.className = "feedback";
 
@@ -238,10 +370,12 @@ function handleSelection(selectedImg) {
     correctCount++;
     feedback.textContent = "✅ Correct!";
     feedback.className = "feedback correct";
+    feedback.style.display = "block";
   } else {
     wrongCount++;
     feedback.textContent = "❌ Wrong!";
     feedback.className = "feedback incorrect";
+    feedback.style.display = "block";
     wrongAnswers.push({
       question: current.word,
       correct: current.correctImage.replace(".jpg", ""),
@@ -261,7 +395,7 @@ function handleSelection(selectedImg) {
   });
 
   currentIndex++;
-  setTimeout(nextOrEndGame, 1500);
+  setTimeout(nextOrEndGame, 3000);
 }
 
 function checkTypedAnswer() {
@@ -281,10 +415,12 @@ function checkTypedAnswer() {
     correctCount++;
     feedback.textContent = "✅ Correct!";
     feedback.className = "feedback correct";
+    feedback.style.display = "block";
   } else {
     wrongCount++;
     feedback.textContent = `❌ Wrong! The correct answer was: ${current.word}`;
     feedback.className = "feedback incorrect";
+    feedback.style.display = "block";
     wrongAnswers.push({
       question: current.word,
       correct: current.word,
@@ -294,12 +430,18 @@ function checkTypedAnswer() {
 
   document.getElementById("score").textContent = score;
   currentIndex++;
-  setTimeout(nextOrEndGame, 1500);
+  setTimeout(nextOrEndGame, 3000);
 }
 
 function nextOrEndGame() {
   if (currentIndex < selectedQuestions.length) {
-    loadWord();
+    if (lastLevel === "fillblank") {
+      loadFillBlankQuestion();
+    } else if (lastLevel === "medium") {
+      loadMatchTask();
+    } else {
+      loadWord();
+    }
   } else {
     document.getElementById("word-display").textContent = "Game Over!";
     document.getElementById("typed-answer").style.display = "none";
@@ -307,7 +449,8 @@ function nextOrEndGame() {
     document.getElementById("game-section").style.display = "none";
     document.getElementById("result-section").style.display = "block";
 
-    document.getElementById("total-questions").textContent = selectedQuestions.length;
+    document.getElementById("total-questions").textContent =
+      selectedQuestions.length;
     document.getElementById("correct-answers").textContent = correctCount;
     document.getElementById("wrong-answers").textContent = wrongCount;
     document.getElementById("final-score").textContent = score;
@@ -324,11 +467,22 @@ function nextOrEndGame() {
       wrongAnswers.forEach((item) => {
         if (item.question === "Matching task" && item.details) {
           const div = document.createElement("div");
-          div.innerHTML = `<i class='fas fa-exchange-alt'></i> <strong>Matching task:</strong><ul style='margin:0.5em 0 0 1.5em;padding:0;'>${item.details.map(d => `<li style='margin-bottom:0.25em;'><span style='font-weight:600;'>${d.word}:</span> ${d.isCorrect ? "<span style='color:#059669;'>✅ Correct!</span>" : `❌ You chose '<span style='color:#dc2626;'>${d.selected}</span>', correct is '<span style='color:#059669;'>${d.correct}</span>'`}</li>`).join("")}</ul>`;
+          div.innerHTML = `<i class='fas fa-exchange-alt'></i> <strong>Matching task:</strong><ul style='margin:0.5em 0 0 1.5em;padding:0;'>${item.details
+            .map(
+              (d) =>
+                `<li style='margin-bottom:0.25em;'><span style='font-weight:600;'>${
+                  d.word
+                }:</span> ${
+                  d.isCorrect
+                    ? "<span style='color:#059669;'>✅ Correct!</span>"
+                    : `❌ You chose '<span style='color:#dc2626;'>${d.selected}</span>', correct is '<span style='color:#059669;'>${d.correct}</span>'`
+                }</li>`
+            )
+            .join("")}</ul>`;
           reviewList.appendChild(div);
         } else {
           const li = document.createElement("li");
-          li.textContent = `❌ You answered '${item.selected}' instead of '${item.correct}' for "${item.question}"`;
+          li.textContent = `❌ You answered '${item.selected}' instead of '${item.correct}'"`;
           reviewList.appendChild(li);
         }
       });
@@ -375,8 +529,9 @@ function startTimer() {
       clearInterval(timer);
       feedback.textContent = "⏳ Time's up!";
       feedback.className = "feedback incorrect";
+      feedback.style.display = "block";
       currentIndex++;
-      setTimeout(nextOrEndGame, 1500);
+      setTimeout(nextOrEndGame, 3000);
     }
   }, 1000);
 }
@@ -409,9 +564,27 @@ function loadMatchTask() {
   const imageOptions = document.getElementById("image-options");
   const typedAnswer = document.getElementById("typed-answer");
   const wordDisplay = document.getElementById("word-display");
+
+  // Insert level and question index info at the top of the game header
+  const levelStatusContainer = document.querySelector(".level-status");
+  if (levelStatusContainer) levelStatusContainer.remove(); // remove old if exists
+  const gameHeader = document.querySelector(".game-header");
+  const statusDiv = document.createElement("div");
+  statusDiv.className = "level-status";
+  statusDiv.innerHTML = `Level: <strong>${lastLevel.toUpperCase()}</strong> – Question <strong>${
+    currentIndex + 1
+  }/${selectedQuestions.length}</strong>`;
+  gameHeader.appendChild(statusDiv);
+
   const feedback = document.getElementById("feedback");
 
-  if (!matchTask || !imageOptions || !typedAnswer || !wordDisplay || !feedback) {
+  if (
+    !matchTask ||
+    !imageOptions ||
+    !typedAnswer ||
+    !wordDisplay ||
+    !feedback
+  ) {
     console.error("Required elements not found");
     return;
   }
@@ -420,7 +593,11 @@ function loadMatchTask() {
   imageOptions.style.display = "none";
   typedAnswer.style.display = "none";
   wordDisplay.style.display = "none";
+  
+  // Ensure feedback is visible and reset
+  feedback.style.display = "block";
   feedback.textContent = "";
+  feedback.className = "feedback";
 
   // Add or update timer display for medium level
   let matchTimer = document.getElementById("match-timer");
@@ -437,7 +614,8 @@ function loadMatchTask() {
   window.matchTimerInterval = setInterval(() => {
     matchTimeLeft--;
     matchTimer.textContent = `Time left: ${matchTimeLeft}s`;
-    matchTimer.style.color = matchTimeLeft <= 5 ? "var(--error-color)" : "var(--text-color)";
+    matchTimer.style.color =
+      matchTimeLeft <= 5 ? "var(--error-color)" : "var(--text-color)";
     if (matchTimeLeft <= 0) {
       clearInterval(window.matchTimerInterval);
       if (!answered) {
@@ -480,11 +658,11 @@ function loadMatchTask() {
   const wordImagePairs = [
     { word: current.word, image: current.correctImage },
     ...current.options
-      .filter(img => img !== current.correctImage)
-      .map(img => ({
+      .filter((img) => img !== current.correctImage)
+      .map((img) => ({
         word: img.split(".")[0],
-        image: img
-      }))
+        image: img,
+      })),
   ].slice(0, 3);
 
   // Shuffle the pairs
@@ -536,7 +714,7 @@ function loadMatchTask() {
   if (existingSubmitButton) {
     existingSubmitButton.remove();
   }
-  
+
   const submitButton = document.createElement("button");
   submitButton.className = "btn-primary submit-matches";
   submitButton.innerHTML = '<i class="fas fa-check"></i> Submit Matches';
@@ -549,15 +727,15 @@ function loadMatchTask() {
 
 function handleWordClick(wordElement) {
   if (answered || wordElement.classList.contains("matched")) return;
-  
+
   // Remove previous selection
-  document.querySelectorAll(".match-word").forEach(el => {
+  document.querySelectorAll(".match-word").forEach((el) => {
     el.classList.remove("selected");
   });
-  
+
   wordElement.classList.add("selected");
   selectedWord = wordElement.dataset.word;
-  
+
   // If we have both selections, create a match
   if (selectedWord && selectedImage) {
     createMatch();
@@ -566,15 +744,15 @@ function handleWordClick(wordElement) {
 
 function handleImageClick(imageElement) {
   if (answered || imageElement.classList.contains("matched")) return;
-  
+
   // Remove previous selection
-  document.querySelectorAll(".match-image").forEach(el => {
+  document.querySelectorAll(".match-image").forEach((el) => {
     el.classList.remove("selected");
   });
-  
+
   imageElement.classList.add("selected");
   selectedImage = imageElement.dataset.image;
-  
+
   // If we have both selections, create a match
   if (selectedWord && selectedImage) {
     createMatch();
@@ -584,31 +762,34 @@ function handleImageClick(imageElement) {
 function createMatch() {
   const wordElement = document.querySelector(".match-word.selected");
   const imageElement = document.querySelector(".match-image.selected");
-  
+
   if (!wordElement || !imageElement) return;
-  
+
   // Check if this word or image is already matched
-  if (currentMatches.has(selectedWord) || Array.from(currentMatches.values()).includes(selectedImage)) {
+  if (
+    currentMatches.has(selectedWord) ||
+    Array.from(currentMatches.values()).includes(selectedImage)
+  ) {
     return;
   }
-  
+
   // Add the match
   currentMatches.set(selectedWord, selectedImage);
-  
+
   // Draw arrow
   drawArrow(wordElement, imageElement, true);
-  
+
   // Mark elements as matched
   wordElement.classList.add("matched");
   imageElement.classList.add("matched");
-  
+
   // Reset selections
   selectedWord = null;
   selectedImage = null;
-  document.querySelectorAll(".match-word, .match-image").forEach(el => {
+  document.querySelectorAll(".match-word, .match-image").forEach((el) => {
     el.classList.remove("selected");
   });
-  
+
   // Update submit button state
   const submitButton = document.querySelector(".submit-matches");
   if (submitButton && currentMatches.size === 3) {
@@ -618,15 +799,15 @@ function createMatch() {
 
 function submitMatches() {
   if (answered || currentMatches.size !== 3) return;
-  
+
   answered = true;
   clearInterval(timer);
   if (window.matchTimerInterval) clearInterval(window.matchTimerInterval);
-  
+
   const current = selectedQuestions[currentIndex];
   let correctMatches = 0;
   const matchDetails = [];
-  
+
   // Check each match
   currentMatches.forEach((image, word) => {
     const isCorrect = image.split(".")[0].toLowerCase() === word.toLowerCase();
@@ -637,10 +818,10 @@ function submitMatches() {
       word,
       selected: image.split(".")[0],
       correct: word,
-      isCorrect
+      isCorrect,
     });
   });
-  
+
   const feedback = document.getElementById("feedback");
   if (feedback) {
     // Update score and feedback
@@ -655,37 +836,42 @@ function submitMatches() {
       feedback.className = "feedback incorrect";
       wrongAnswers.push({
         question: "Matching task",
-        details: matchDetails
+        details: matchDetails,
       });
     }
   }
-  
+
   const scoreElement = document.getElementById("score");
   if (scoreElement) {
     scoreElement.textContent = score;
   }
-  
+
   // Disable all interactions
-  document.querySelectorAll(".match-word, .match-image").forEach(el => {
+  document.querySelectorAll(".match-word, .match-image").forEach((el) => {
     el.style.pointerEvents = "none";
   });
-  
+
   // Clear the arrow container and redraw all arrows
   const arrowContainer = document.getElementById("arrow-container");
   if (arrowContainer) {
     arrowContainer.innerHTML = "";
     currentMatches.forEach((image, word) => {
-      const wordElement = document.querySelector(`.match-word[data-word="${word}"]`);
-      const imageElement = document.querySelector(`.match-image[data-image="${image}"]`);
+      const wordElement = document.querySelector(
+        `.match-word[data-word="${word}"]`
+      );
+      const imageElement = document.querySelector(
+        `.match-image[data-image="${image}"]`
+      );
       if (wordElement && imageElement) {
-        const isCorrect = image.split(".")[0].toLowerCase() === word.toLowerCase();
+        const isCorrect =
+          image.split(".")[0].toLowerCase() === word.toLowerCase();
         drawArrow(wordElement, imageElement, isCorrect);
       }
     });
   }
-  
+
   currentIndex++;
-  setTimeout(nextOrEndGame, 2000);
+  setTimeout(nextOrEndGame, 3000);
 }
 
 function drawArrow(fromElement, toElement, isCorrect) {
@@ -700,42 +886,54 @@ function drawArrow(fromElement, toElement, isCorrect) {
   svg.style.left = "0";
   svg.style.pointerEvents = "none";
   svg.style.zIndex = "1";
-  
+
   const fromRect = fromElement.getBoundingClientRect();
   const toRect = toElement.getBoundingClientRect();
   const containerRect = svgContainer.getBoundingClientRect();
-  
+
   const fromX = fromRect.right - containerRect.left;
   const fromY = fromRect.top + fromRect.height / 2 - containerRect.top;
   const toX = toRect.left - containerRect.left;
   const toY = toRect.top + toRect.height / 2 - containerRect.top;
-  
+
   // Use solid green for correct, solid red for incorrect
-  const color = isCorrect ? '#059669' : '#dc2626';
-  
+  const color = isCorrect ? "#059669" : "#dc2626";
+
   const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
   // Create curved path
   const midX = (fromX + toX) / 2;
-  path.setAttribute("d", `M ${fromX} ${fromY} Q ${midX} ${fromY} ${toX} ${toY}`);
+  path.setAttribute(
+    "d",
+    `M ${fromX} ${fromY} Q ${midX} ${fromY} ${toX} ${toY}`
+  );
   path.setAttribute("stroke", color);
   path.setAttribute("stroke-width", "3");
   path.setAttribute("fill", "none");
-  path.setAttribute("marker-end", `url(#arrowhead-${isCorrect ? 'green' : 'red'})`);
+  path.setAttribute(
+    "marker-end",
+    `url(#arrowhead-${isCorrect ? "green" : "red"})`
+  );
 
   // Add arrowhead marker
   const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-  const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
-  marker.setAttribute("id", `arrowhead-${isCorrect ? 'green' : 'red'}`);
+  const marker = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "marker"
+  );
+  marker.setAttribute("id", `arrowhead-${isCorrect ? "green" : "red"}`);
   marker.setAttribute("markerWidth", "10");
   marker.setAttribute("markerHeight", "7");
   marker.setAttribute("refX", "9");
   marker.setAttribute("refY", "3.5");
   marker.setAttribute("orient", "auto");
-  
-  const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+
+  const polygon = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "polygon"
+  );
   polygon.setAttribute("points", "0 0, 10 3.5, 0 7");
   polygon.setAttribute("fill", color);
-  
+
   marker.appendChild(polygon);
   defs.appendChild(marker);
   svg.appendChild(defs);

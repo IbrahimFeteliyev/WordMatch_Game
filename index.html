@@ -113,10 +113,13 @@
                 <i class="fas fa-layer-group"></i> Choose difficulty:
               </label>
               <select id="level" class="select-custom">
-                <option value="easy">⭐ Easy</option>
-                <option value="medium">⭐⭐ Medium</option>
-                <option value="hard">⭐⭐⭐ Hard</option>
+                <option value="easy">⭐ (A1) – Image Selection</option>
+                <option value="medium">⭐⭐ (A2) – Match Words with Images</option>
+                <option value="hard">⭐⭐⭐ (B1) – Type the Word</option>
+                <option value="fillblank">⭐⭐⭐⭐ (B1+) – Sentence Completion</option>
               </select>
+              
+              
             </div>
 
             <button class="btn-primary" onclick="startGame()">
@@ -150,17 +153,17 @@
               <strong>Match each word to the correct image:</strong>
             </p>
             <div class="match-task-container">
-  <div class="match-content">
-    <div id="word-list" class="match-column"></div>
-    <div id="image-list" class="match-column"></div>
-  </div>
-  <!-- varsa oxlar üçün SVG konteyner -->
-  <div id="arrow-container"></div>
-</div>
+              <div class="match-content">
+                <div id="word-list" class="match-column"></div>
+                <div id="image-list" class="match-column"></div>
+              </div>
+              <div id="arrow-container"></div>
+            </div>
           </div>
           <div class="image-options" id="image-options"></div>
-
+          <!-- Feedback element for all game modes -->
           <div class="feedback" id="feedback"></div>
+
           <div id="fill-blank-task" style="display: none; margin-top: 1rem">
             <p id="fill-sentence" style="font-size: 1.2rem"></p>
             <div id="fill-options" style="margin-top: 10px"></div>

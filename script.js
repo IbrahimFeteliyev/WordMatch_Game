@@ -28,6 +28,46 @@ const questions = {
         options: ["apple.jpg", "banana.jpg", "grape.jpg"],
       },
       {
+        word: "Apple",
+        correctImage: "apple.jpg",
+        options: ["apple.jpg", "banana.jpg", "grape.jpg"],
+      },
+      {
+        word: "Apple",
+        correctImage: "apple.jpg",
+        options: ["apple.jpg", "banana.jpg", "grape.jpg"],
+      },
+      {
+        word: "Apple",
+        correctImage: "apple.jpg",
+        options: ["apple.jpg", "banana.jpg", "grape.jpg"],
+      },
+      {
+        word: "Apple",
+        correctImage: "apple.jpg",
+        options: ["apple.jpg", "banana.jpg", "grape.jpg"],
+      },
+      {
+        word: "Apple",
+        correctImage: "apple.jpg",
+        options: ["apple.jpg", "banana.jpg", "grape.jpg"],
+      },
+      {
+        word: "Apple",
+        correctImage: "apple.jpg",
+        options: ["apple.jpg", "banana.jpg", "grape.jpg"],
+      },
+      {
+        word: "Apple",
+        correctImage: "apple.jpg",
+        options: ["apple.jpg", "banana.jpg", "grape.jpg"],
+      },
+      {
+        word: "Apple",
+        correctImage: "apple.jpg",
+        options: ["apple.jpg", "banana.jpg", "grape.jpg"],
+      },
+      {
         word: "Banana",
         correctImage: "banana.jpg",
         options: ["pear.jpg", "banana.jpg", "lemon.jpg"],
@@ -306,6 +346,15 @@ function loadWord() {
   feedback.textContent = "";
   feedback.className = "feedback";
 
+  // Add level and question counter
+  const levelStatusContainer = document.querySelector(".level-status");
+  if (levelStatusContainer) levelStatusContainer.remove(); // remove old if exists
+  const gameHeader = document.querySelector(".game-header");
+  const statusDiv = document.createElement("div");
+  statusDiv.className = "level-status";
+  statusDiv.innerHTML = `Level: <strong>${level.toUpperCase()}</strong> – Question <strong>${currentIndex + 1}/${selectedQuestions.length}</strong>`;
+  gameHeader.appendChild(statusDiv);
+
   wordDisplay.innerHTML = `
     <div class="word-card">
       <span class="word-text">${
@@ -316,7 +365,7 @@ function loadWord() {
       <button id="play-audio" class="btn-audio" aria-label="Play pronunciation">
         <i class="fas fa-volume-up"></i>
       </button>
-      <div id="timer" class="timer">Time left: 10s</div>
+      ${level === "hard" ? '<div id="timer" class="timer">Time left: 10s</div>' : ''}
     </div>
   `;
 
@@ -346,7 +395,6 @@ function loadWord() {
       imageElement.alt = img.replace(".jpg", "");
       imageElement.addEventListener("click", () => {
         if (!answered) {
-          clearInterval(timer);
           handleSelection(img);
         }
       });
@@ -354,7 +402,10 @@ function loadWord() {
     });
   }
 
-  startTimer();
+  // Only start timer for hard level
+  if (level === "hard") {
+    startTimer();
+  }
 }
 
 function handleSelection(selectedImg) {

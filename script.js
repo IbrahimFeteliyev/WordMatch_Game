@@ -75,12 +75,102 @@ const questions = {
     ],
     medium: [
       {
-        word: "Pineapple",
+        word: "pineapple",
+        correctImage: "pineapple.jpg",
+        options: ["pineapple.jpg", "orange.jpg", "melon.jpg"],
+      },
+      {
+        word: "pineapple",
+        correctImage: "pineapple.jpg",
+        options: ["pineapple.jpg", "orange.jpg", "melon.jpg"],
+      },
+      {
+        word: "pineapple",
+        correctImage: "pineapple.jpg",
+        options: ["pineapple.jpg", "orange.jpg", "melon.jpg"],
+      },
+      {
+        word: "pineapple",
+        correctImage: "pineapple.jpg",
+        options: ["pineapple.jpg", "orange.jpg", "melon.jpg"],
+      },
+      {
+        word: "pineapple",
+        correctImage: "pineapple.jpg",
+        options: ["pineapple.jpg", "orange.jpg", "melon.jpg"],
+      },
+      {
+        word: "pineapple",
+        correctImage: "pineapple.jpg",
+        options: ["pineapple.jpg", "orange.jpg", "melon.jpg"],
+      },
+      {
+        word: "pineapple",
+        correctImage: "pineapple.jpg",
+        options: ["pineapple.jpg", "orange.jpg", "melon.jpg"],
+      },
+      {
+        word: "pineapple",
+        correctImage: "pineapple.jpg",
+        options: ["pineapple.jpg", "orange.jpg", "melon.jpg"],
+      },
+      {
+        word: "pineapple",
+        correctImage: "pineapple.jpg",
+        options: ["pineapple.jpg", "orange.jpg", "melon.jpg"],
+      },
+      {
+        word: "pineapple",
         correctImage: "pineapple.jpg",
         options: ["pineapple.jpg", "orange.jpg", "melon.jpg"],
       },
     ],
     hard: [
+      {
+        word: "Pomegranate",
+        correctImage: "pomegranate.jpg",
+        options: ["pomegranate.jpg", "plum.jpg", "fig.jpg"],
+      },
+      {
+        word: "Pomegranate",
+        correctImage: "pomegranate.jpg",
+        options: ["pomegranate.jpg", "plum.jpg", "fig.jpg"],
+      },
+      {
+        word: "Pomegranate",
+        correctImage: "pomegranate.jpg",
+        options: ["pomegranate.jpg", "plum.jpg", "fig.jpg"],
+      },
+      {
+        word: "Pomegranate",
+        correctImage: "pomegranate.jpg",
+        options: ["pomegranate.jpg", "plum.jpg", "fig.jpg"],
+      },
+      {
+        word: "Pomegranate",
+        correctImage: "pomegranate.jpg",
+        options: ["pomegranate.jpg", "plum.jpg", "fig.jpg"],
+      },
+      {
+        word: "Pomegranate",
+        correctImage: "pomegranate.jpg",
+        options: ["pomegranate.jpg", "plum.jpg", "fig.jpg"],
+      },
+      {
+        word: "Pomegranate",
+        correctImage: "pomegranate.jpg",
+        options: ["pomegranate.jpg", "plum.jpg", "fig.jpg"],
+      },
+      {
+        word: "Pomegranate",
+        correctImage: "pomegranate.jpg",
+        options: ["pomegranate.jpg", "plum.jpg", "fig.jpg"],
+      },
+      {
+        word: "Pomegranate",
+        correctImage: "pomegranate.jpg",
+        options: ["pomegranate.jpg", "plum.jpg", "fig.jpg"],
+      },
       {
         word: "Pomegranate",
         correctImage: "pomegranate.jpg",
@@ -723,7 +813,8 @@ function loadMatchTask() {
   wordImagePairs.forEach(({ word }) => {
     const wordItem = document.createElement("div");
     wordItem.className = "match-word";
-    wordItem.textContent = word;
+    // Convert word to sentence case (first letter capitalized, rest lowercase)
+    wordItem.textContent = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     wordItem.dataset.word = word;
     wordItem.onclick = () => handleWordClick(wordItem);
     wordList.appendChild(wordItem);
